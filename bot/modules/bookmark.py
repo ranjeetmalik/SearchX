@@ -45,11 +45,14 @@ def rembookmark(update, context):
     sendMessage(msg, context.bot, update.message)
 
 def bookmarks(update, context):
-    drive_keys = ''
-    if len(BOOKMARKS) == 0:
-        drive_keys += 'None'
-    else:
-        drive_keys += '\n'.join(f'• <code>{drive_key}</code> - {BOOKMARKS[drive_key]}' for drive_key in BOOKMARKS)
+    drive_keys = '' + (
+        'None'
+        if len(BOOKMARKS) == 0
+        else '\n'.join(
+            f'• <code>{drive_key}</code> - {BOOKMARKS[drive_key]}'
+            for drive_key in BOOKMARKS
+        )
+    )
     msg = f'<b><u>Bookmarks</u></b>\n{drive_keys}'
     sendMessage(msg, context.bot, update.message)
 
