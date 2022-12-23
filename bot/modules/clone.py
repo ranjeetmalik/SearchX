@@ -60,13 +60,12 @@ def cloneNode(update, context):
         deleteMessage(context.bot, msg)
         if res != "":
             return sendMessage(res, context.bot, update.message)
-        if CLONE_LIMIT is not None:
-            if size > CLONE_LIMIT * 1024**3:
-                msg2 = f"<b>Name:</b> <code>{name}</code>"
-                msg2 += f"\n<b>Size:</b> {get_readable_file_size(size)}"
-                msg2 += f"\n<b>Limit:</b> {CLONE_LIMIT} GB"
-                msg2 += "\n\n<b>⚠️ Task failed</b>"
-                return sendMessage(msg2, context.bot, update.message)
+        if CLONE_LIMIT is not None and size > CLONE_LIMIT * 1024**3:
+            msg2 = f"<b>Name:</b> <code>{name}</code>"
+            msg2 += f"\n<b>Size:</b> {get_readable_file_size(size)}"
+            msg2 += f"\n<b>Limit:</b> {CLONE_LIMIT} GB"
+            msg2 += "\n\n<b>⚠️ Task failed</b>"
+            return sendMessage(msg2, context.bot, update.message)
         if files <= 20:
             msg = sendMessage(f"<b>Cloning:</b> <code>{link}</code>", context.bot, update.message)
             LOGGER.info(f"Cloning: {link}")
@@ -98,8 +97,10 @@ def cloneNode(update, context):
             LOGGER.info(f"Deleting: {link}")
             gd.deleteFile(link)
     else:
-        help_msg = '<b><u>Instructions</u></b>\nSend a link along with command'
-        help_msg += '\n\n<b><u>Supported Sites</u></b>\n• Google Drive\n• GDToT'
+        help_msg = (
+            '<b><u>Instructions</u></b>\nSend a link along with command'
+            + '\n\n<b><u>Supported Sites</u></b>\n• Google Drive\n• GDToT'
+        )
         sendMessage(help_msg, context.bot, update.message)
 
 clone_handler = CommandHandler(BotCommands.CloneCommand, cloneNode,

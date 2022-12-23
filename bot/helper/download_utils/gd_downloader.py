@@ -17,13 +17,12 @@ def add_gd_download(link, path, listener, customname, is_gdtot):
         return sendMessage(res, listener.bot, listener.message)
     if customname:
         name = customname
-    if ARCHIVE_LIMIT is not None:
-        if size > ARCHIVE_LIMIT * 1024**3:
-            msg2 = f"<b>Name:</b> <code>{name}</code>"
-            msg2 += f"\n<b>Size:</b> {get_readable_file_size(size)}"
-            msg2 += f"\n<b>Limit:</b> {ARCHIVE_LIMIT} GB"
-            msg2 += "\n\n<b>⚠️ Task failed</b>"
-            return sendMessage(msg2, listener.bot, listener.message)
+    if ARCHIVE_LIMIT is not None and size > ARCHIVE_LIMIT * 1024**3:
+        msg2 = f"<b>Name:</b> <code>{name}</code>"
+        msg2 += f"\n<b>Size:</b> {get_readable_file_size(size)}"
+        msg2 += f"\n<b>Limit:</b> {ARCHIVE_LIMIT} GB"
+        msg2 += "\n\n<b>⚠️ Task failed</b>"
+        return sendMessage(msg2, listener.bot, listener.message)
     LOGGER.info(f"Downloading: {name}")
     drive = GoogleDriveHelper(name, path, size, listener)
     gid = ''.join(random.SystemRandom().choices(string.ascii_letters + string.digits, k=12))

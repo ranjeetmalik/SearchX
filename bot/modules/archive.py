@@ -139,9 +139,7 @@ class ArchiveListener:
             url = f'{INDEX_URL}/{url_path}'
             if typ == "Folder":
                 url += '/'
-                msg += f'<b> | <a href="{url}">Index Link</a></b>'
-            else:
-                msg += f'<b> | <a href="{url}">Index Link</a></b>'
+            msg += f'<b> | <a href="{url}">Index Link</a></b>'
         sendMessage(msg, self.bot, self.message)
         clean_download(self.dir)
         with download_dict_lock:
@@ -195,13 +193,10 @@ def _archive(bot, message, is_compress=False, is_extract=False):
         if link.startswith(('|', 'pswd:')):
             link = ''
     name = mesg[0].split('|', maxsplit=1)
-    if len(name) > 1:
-        if 'pswd:' in name[0]:
-            name = ''
-        else:
-            name = name[1].split('pswd:')[0].strip()
-    else:
+    if len(name) > 1 and 'pswd:' in name[0] or len(name) <= 1:
         name = ''
+    else:
+        name = name[1].split('pswd:')[0].strip()
     pswd = mesg[0].split(' pswd: ')
     pswd = pswd[1] if len(pswd) > 1 else None
     if link != '':
@@ -225,8 +220,10 @@ def _archive(bot, message, is_compress=False, is_extract=False):
     if is_gdrive_link(link):
         threading.Thread(target=add_gd_download, args=(link, f'{DOWNLOAD_DIR}{listener.uid}', listener, name, is_gdtot)).start()
     else:
-        help_msg = '<b><u>Instructions</u></b>\nSend a link along with command'
-        help_msg += '\n\n<b><u>Supported Sites</u></b>\n• Google Drive\n• GDToT'
+        help_msg = (
+            '<b><u>Instructions</u></b>\nSend a link along with command'
+            + '\n\n<b><u>Supported Sites</u></b>\n• Google Drive\n• GDToT'
+        )
         help_msg += '\n\n<b><u>Set Custom Name</u></b>\nAdd "<code>|customname</code>" after the link'
         help_msg += '\n\n<b><u>Set Password</u></b>\nAdd "<code>pswd: xxx</code>" after the link'
         sendMessage(help_msg, bot, message)

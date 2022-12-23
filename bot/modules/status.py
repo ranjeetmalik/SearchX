@@ -15,14 +15,13 @@ def statusNode(update, context):
         count = len(download_dict)
     if count == 0:
         return sendMessage("<b>No active task</b>", context.bot, update.message)
-    else:
-        sendStatusMessage(update.message, context.bot)
-        deleteMessage(context.bot, update.message)
-        with status_reply_dict_lock:
-            if Interval:
-                Interval[0].cancel()
-                Interval.clear()
-                Interval.append(SetInterval(STATUS_UPDATE_INTERVAL, update_all_messages))
+    sendStatusMessage(update.message, context.bot)
+    deleteMessage(context.bot, update.message)
+    with status_reply_dict_lock:
+        if Interval:
+            Interval[0].cancel()
+            Interval.clear()
+            Interval.append(SetInterval(STATUS_UPDATE_INTERVAL, update_all_messages))
 
 status_handler = CommandHandler(BotCommands.StatusCommand, statusNode,
                                 filters=CustomFilters.authorized_user | CustomFilters.authorized_chat)
